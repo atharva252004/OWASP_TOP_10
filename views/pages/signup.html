@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <title>Sign Up</title>
@@ -8,21 +8,23 @@
       rel="stylesheet"
     />
     <style>
-     html{
-         background: url(img.jpg) no-repeat center center fixed;
-         -webkit-background-size:cover;
-         -moz-background-size:cover;
-         -o-background-size:cover;
-          background-size:cover;
-     }  
+      html {
+        background: url(img.jpg) no-repeat center center fixed;
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+      }
     </style>
-    <link rel="icon" href="icon.jpg" type="image/x-icon">
+    <link rel="icon" href="icon.jpg" type="image/x-icon" />
   </head>
   <body>
-    <h1 style="color:rgb(127, 224, 16); font-family:verdana;"><u>CRIME AWARENESS PORTAL</u></h1>
+    <h1 style="color: rgb(127, 224, 16); font-family: verdana">
+      <u>CRIME AWARENESS PORTAL</u>
+    </h1>
     <div class="signup-box">
       <h1>Sign Up</h1>
-      <form action="/register" method="post">
+      <form action="/signup" method="post">
         <label>UserName</label>
         <input type="text" id="username" name="username" placeholder="" />
         <label>First Name</label>
@@ -35,16 +37,14 @@
         <input type="text" id="phone" name="phone" placeholder="" />
         <label>Password</label>
         <input type="password" id="password" name="password" placeholder="" />
-        <br><br><br>
-        <button style="background-color: rgb(127, 224, 16);">Submit</button>
+        <br /><br /><br />
+        <button style="background-color: rgb(127, 224, 16)">Submit</button>
       </form>
-      <br>
-      Already have an account? 
-      <a href="/login"><button style="background-color: rgb(127, 224, 16);" >LOGIN</button> </a>
+      <br />
+      Already have an account?
+      <a href="/login"
+        ><button style="background-color: rgb(127, 224, 16)">LOGIN</button>
+      </a>
     </div>
-    
   </body>
 </html>
-
-
-
