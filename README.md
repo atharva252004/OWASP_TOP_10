@@ -1,3 +1,6 @@
+SE - I
+OWASP Top 10 Attacks
+
 # Crime Awareness Portal
 ### Crime Awareness Portal is a web application developed using the MERN (MongoDB, Express.js, React.js, Node.js) stack. The portal allows users to report crimes by providing information such as location, time, and type of crime. The reported crimes can be verified by officers using their dedicated accounts. The portal also includes crime awareness videos and a feedback form for users.
 ----
