@@ -2,6 +2,7 @@
 const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const ejs = require('ejs');
 
 const mongoose = require('mongoose');
@@ -14,6 +15,7 @@ const app = express();
 // set the view engine to ejs
 app.set('view engine', 'ejs');
 
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -68,6 +70,7 @@ app.post('/signup', (req, res) => {
         res.sendFile(__dirname + '/views/pages/signup.html');
         return;
       }
+      res.cookie('name', req.body.firstname + ' ' + req.body.lastname);
       passport.authenticate('local')(req, res, function() {
         res.redirect('/login');
         //res.sendFile(__dirname + "/views/pages/login.html");
@@ -90,27 +93,39 @@ app.post(
   function(req, res) {},
 );
 
-app.get('/complaints', function(req, res) {
-  res.render('pages/complaints');
-});
-
 // Users Route
 app.get('/users', async function(req, res) {
   // Find data in users collection
-  const users = await Users.find();
-  console.log('Users: ' + JSON.stringify(users));
+  const users = await User.find();
   // Show books page
   res.render('pages/users', { users });
 });
 
-app.get('/issues', function(req, res) {
+// Get complaints for given name
+app.get('/my-complaints/', async function(req, res) {
   // Find data in users collection
-  Complaint.find().exec(function(err, complaints) {
-    console.log('Complaints: ' + JSON.stringify(complaints));
-    // Show books page
-    res.render('pages/complaints', {
-      Complaints: complaints,
-    });
+  const complaints = await Complaint.find({
+    firstname: req.cookies.name.split(' ')[0],
+    lastname: req.cookies.name.split(' ')[1],
+  });
+  res.render('pages/complaints', {
+    Complaints: complaints,
+  });
+});
+
+app.get('/complaints', async function(req, res) {
+  // Find data in users collection
+  const complaints = await Complaint.find();
+  res.render('pages/complaints', {
+    Complaints: complaints,
+  });
+});
+
+app.get('/complaints', async function(req, res) {
+  // Find data in users collection
+  const complaints = await Complaint.find();
+  res.render('pages/complaints', {
+    Complaints: complaints,
   });
 });
 

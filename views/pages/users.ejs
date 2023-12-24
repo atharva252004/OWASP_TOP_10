@@ -1,36 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <%- include('../partials/head') %>
-</head>
-<body>
-<header>
-    <%- include('../partials/header') %>
-</header>
-<main>
-    <table>
-        <% users.forEach(function(user) { %>
-            <th><h3>First Name </h3></th>
-            <th><h3>Last Name</h3></th>
-            <th><h3>Age</h3></th>
-            <tbody>
-            <tr>
-                <td>
-                    <p><%= user.firstname ;%></p>
-                </td>
-                <td>
-                    <p><%= user.lastname ;%></p>
-                </td>
-                <td>
-                    <p><%= user.age ;%></p>
-                </td>
-            </tr>
-            </tbody>
-        <% }); %>
-    </table>
-</main>
-<footer>
-    <%- include('../partials/footer') %>
-</footer>
-</body>
+    <head>
+        <%- include('../partials/head') %>
+    </head>
+    <body>
+        <header>
+            <%- include('../partials/header') %>
+        </header>
+        <main>
+            <table>
+                <% users.forEach(function(user) { %>
+                    <th><h3>Username</h3></th>
+                    <th><h3>First Name </h3></th>
+                    <th><h3>Last Name</h3></th>
+                    <th><h3>Email</h3></th>
+                    <th><h3>Phone</h3></th>
+                    <th><h3>Password</h3></th>
+                    <tbody>
+                    <tr>
+                        <td>
+                            <p><%= user.username; %></p>
+                        </td>
+                        <td>
+                            <p><%= user.firstname; %></p>
+                        </td>
+                        <td>
+                            <p><%= user.lastname; %></p>
+                        </td>
+                        <td>
+                            <p><%= user.email; %></p>
+                        </td>
+                        <td>
+                            <p><%= user.phone; %></p>
+                        </td>
+                        <td>
+                            <p><%= user.password; %></p>
+                        </td>
+                    </tr>
+                    </tbody>
+                <% }); %>
+            </table>
+        </main>
+        <footer>
+            <%- include('../partials/footer') %>
+        </footer>
+    </body>
 </html>

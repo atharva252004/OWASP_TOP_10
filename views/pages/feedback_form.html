@@ -15,28 +15,34 @@
         color: white;
       }
     </style>
+    <script>
+      function submit (e) {
+        document.getElementById('confirmation').innerHTML =
+          'Thank you for your feedback!' + document.getElementById('feedback').value;
+      }
+    </script>
     <link rel='stylesheet' href='nav_css.css' />
     <link rel='icon' href='icon.jpg' type='image/x-icon' />
   </head>
   <body>
     <div id='main'>
       <h1><u>FEEDBACK FORM</u></h1>
-      <form action='signup.html'>
-        <label>
+      <label>
           <textarea
             rows='25'
             cols='150'
+            id='feedback'
             style='background-color: #efb7ba; caret-color: #194f92'
           ></textarea>
-        </label>
-        <br />
-        <input
-          style='color: blue; background-color: chartreuse'
-          type='submit'
-        />
-      </form>
+      </label>
+      <br />
+      <button
+        style='color: blue; background-color: chartreuse'
+        type='button'
+        onclick='submit(this)'>Submit</button>
       <br /><br /><br /><br />
     </div>
+    <div id='confirmation'></div>
     <footer>
       <p>This website is managed by group 5<br /></p>
     </footer>
