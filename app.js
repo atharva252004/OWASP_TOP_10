@@ -22,6 +22,7 @@ const url =
 
 // connecting to database
 mongoose.connect(url);
+app.listen(8080);
 
 // Configure passport-local to use user model for authentication
 passport.serializeUser(User.serializeUser()); //session encoding
@@ -35,18 +36,18 @@ app.use(
     secret: 'super-secret-password', //decode or encode session
     resave: false,
     saveUninitialized: false,
-  })
+  }),
 );
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static(__dirname + '/views/pages'));
 
-app.get('/', function (req, res) {
+app.get('/', function(req, res) {
   res.sendFile(__dirname + '/views/pages/signup.html');
 });
 
-app.get('/home', function (req, res) {
+app.get('/home', function(req, res) {
   res.sendFile(__dirname + '/views/pages/home.html');
 });
 
@@ -60,18 +61,18 @@ app.post('/signup', (req, res) => {
       phone: req.body.phone,
     }),
     req.body.password,
-    function (err, user) {
+    function(err, user) {
       if (err) {
         console.log(err);
         //res.render("register");
         res.sendFile(__dirname + '/views/pages/signup.html');
         return;
       }
-      passport.authenticate('local')(req, res, function () {
+      passport.authenticate('local')(req, res, function() {
         res.redirect('/login');
         //res.sendFile(__dirname + "/views/pages/login.html");
       });
-    }
+    },
   );
 });
 
@@ -86,15 +87,15 @@ app.post(
     successRedirect: '/home',
     failureRedirect: '/login',
   }),
-  function (req, res) {}
+  function(req, res) {},
 );
 
-app.get('/complaints', function (req, res) {
+app.get('/complaints', function(req, res) {
   res.render('pages/complaints');
 });
 
 // Users Route
-app.get('/users', async function (req, res) {
+app.get('/users', async function(req, res) {
   // Find data in users collection
   const users = await Users.find();
   console.log('Users: ' + JSON.stringify(users));
@@ -102,9 +103,9 @@ app.get('/users', async function (req, res) {
   res.render('pages/users', { users });
 });
 
-app.get('/issues', function (req, res) {
+app.get('/issues', function(req, res) {
   // Find data in users collection
-  Complaint.find().exec(function (err, complaints) {
+  Complaint.find().exec(function(err, complaints) {
     console.log('Complaints: ' + JSON.stringify(complaints));
     // Show books page
     res.render('pages/complaints', {
@@ -113,7 +114,7 @@ app.get('/issues', function (req, res) {
   });
 });
 
-app.post('/report', async function (req, res, next) {
+app.post('/report', async function(req, res, next) {
   const crimeDetails = new Complaint({
     firstname: req.body.firstname,
     lastname: req.body.lastname,
