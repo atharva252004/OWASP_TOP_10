@@ -44,6 +44,7 @@
                         <th style="column-width: 100px; background-color: tomato">Complaint</th>
                         <th style="column-width: 300px; background-color: tomato">Location</th>
                         <th style="column-width: 600px; background-color: tomato">Desc</th>
+                        <th style="column-width: 600px; background-color: tomato">Image</th>
                     </tr>
                     <tbody>
                     <tr>
@@ -58,6 +59,9 @@
                         </td>
                         <td>
                             <p><%- complaint.description; %></p>
+                        </td>
+                        <td>
+                            <a href='<%- complaint.url %>'><%- complaint.imageName %></a>
                         </td>
                     </tr>
                     </tbody>
