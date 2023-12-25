@@ -1,12 +1,10 @@
 // Node Modules
 const express = require('express');
-const session = require('express-session');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const ejs = require('ejs');
 
 const mongoose = require('mongoose');
-const passport = require('passport');
 const User = require('./models/User');
 const Complaint = require('./models/Complaint');
 
@@ -26,23 +24,8 @@ const url =
 mongoose.connect(url);
 app.listen(8080);
 
-// Configure passport-local to use user model for authentication
-passport.serializeUser(User.serializeUser()); //session encoding
-passport.deserializeUser(User.deserializeUser()); //session decoding
-passport.use(User.createStrategy());
-
-// Middleware
-// Session
-app.use(
-  session({
-    secret: 'super-secret-password', //decode or encode session
-    resave: false,
-    saveUninitialized: false,
-  }),
-);
+// Middlewares
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(passport.initialize());
-app.use(passport.session());
 app.use(express.static(__dirname + '/views/pages'));
 
 app.get('/', function(req, res) {
@@ -53,30 +36,24 @@ app.get('/home', function(req, res) {
   res.sendFile(__dirname + '/views/pages/home.html');
 });
 
-app.post('/signup', (req, res) => {
-  User.register(
-    new User({
-      username: req.body.username,
-      firstname: req.body.firstname,
-      lastname: req.body.lastname,
-      email: req.body.email,
-      phone: req.body.phone,
-    }),
-    req.body.password,
-    function(err, user) {
-      if (err) {
-        console.log(err);
-        //res.render("register");
-        res.sendFile(__dirname + '/views/pages/signup.html');
-        return;
-      }
-      res.cookie('name', req.body.firstname + ' ' + req.body.lastname);
-      passport.authenticate('local')(req, res, function() {
-        res.redirect('/login');
-        //res.sendFile(__dirname + "/views/pages/login.html");
-      });
-    },
-  );
+app.post('/signup', async (req, res) => {
+  const { username, password, firstname, lastname, email, phone } = req.body;
+
+  const existingUser = await User.findOne({ username: username });
+  if (existingUser) {
+    return res.status(401).json({ message: 'User already exists!' });
+  }
+
+  await User.create({
+    username: username,
+    password: password,
+    firstname: firstname,
+    lastname: lastname,
+    email: email,
+    phone: phone,
+  });
+  res.cookie('name', firstname + ' ' + lastname);
+  res.redirect('/home');
 });
 
 app.get('/login', (req, res) => {
@@ -86,11 +63,25 @@ app.get('/login', (req, res) => {
 
 app.post(
   '/login',
-  passport.authenticate('local', {
-    successRedirect: '/home',
-    failureRedirect: '/login',
-  }),
-  function(req, res) {},
+  async function(req, res) {
+    const { username, password } = req.body;
+    if (!username || !password) {
+      return res.status(401).json({ message: 'Incorrect username or password' });
+    }
+
+    const existingUser = await User.findOne({ username: username }).select("+password");
+    if (!existingUser) {
+      return res.status(401).json({ message: 'No user found!' });
+    }
+
+    // Authenticate user
+    if (existingUser.password !== password) {
+      return res.status(401).json({ message: 'Incorrect password' });
+    }
+
+    res.cookie('name', existingUser.firstname + ' ' + existingUser.lastname);
+    res.redirect('/home');
+  },
 );
 
 // Users Route
