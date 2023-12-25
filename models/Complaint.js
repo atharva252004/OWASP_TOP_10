@@ -8,5 +8,6 @@ const ComplaintSchema = new mongoose.Schema({
   type: String,
   location: String,
   description: String,
+  url: String,
 });
 module.exports = mongoose.model('Complaint', ComplaintSchema);

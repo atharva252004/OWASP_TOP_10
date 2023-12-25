@@ -59,6 +59,9 @@
                         <td>
                             <p><%= complaint.description; %></p>
                         </td>
+                        <td class='complaint-url'>
+                            <a href='<%= complaint.url %>'>Image URL</a>
+                        </td>
                     </tr>
                     </tbody>
                 <% }); %>
@@ -75,5 +78,16 @@
         <a href="feedback_form.html">feedback</a>
     </p>
 </footer>
+<script>
+  const urls = document.querySelectorAll('.complaint-url > a');
+  Array.from(urls).forEach(async function (url) {
+    url.innerText = await fetch(url.getAttribute('href') || 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Placeholder_view_vector.svg/1022px-Placeholder_view_vector.svg.png?20220519031949').then((response) => response.text()).then(text => {
+      const re = /<title>(.*?)<\/title>/;
+      const found = text.match(re);
+      console.log('Changing')
+      return (found && found[1]) || 'Image';
+    })
+  })
+</script>
 </body>
 </html>
