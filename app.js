@@ -28,11 +28,38 @@ app.listen(8080);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/views/pages'));
 
+const isAuthenticated = async (req, res, next) => {
+  if (!req.cookies.username) {
+    return res.redirect('/login');
+  }
+
+  const user = await User.findOne({ username: req.cookies.username });
+  if (!user) {
+    return res.redirect('/login');
+  }
+
+  req.user = user;
+  next();
+};
+
+// isAdmin middleware
+const isAdmin = async (req, res, next) => {
+  if (req.user.username !== 'admin') {
+    return res.status(403).json({ message: 'Forbidden' });
+  }
+
+  next();
+}
+
 app.get('/', function(req, res) {
+  return res.redirect('/home');
+});
+
+app.get('/signup', function(req, res) {
   res.sendFile(__dirname + '/views/pages/signup.html');
 });
 
-app.get('/home', function(req, res) {
+app.get('/home', isAuthenticated, function(req, res) {
   res.sendFile(__dirname + '/views/pages/home.html');
 });
 
@@ -52,7 +79,7 @@ app.post('/signup', async (req, res) => {
     email: email,
     phone: phone,
   });
-  res.cookie('name', firstname + ' ' + lastname);
+  res.cookie('username', username);
   res.redirect('/home');
 });
 
@@ -66,10 +93,12 @@ app.post(
   async function(req, res) {
     const { username, password } = req.body;
     if (!username || !password) {
-      return res.status(401).json({ message: 'Incorrect username or password' });
+      return res.status(401).
+        json({ message: 'Incorrect username or password' });
     }
 
-    const existingUser = await User.findOne({ username: username }).select("+password");
+    const existingUser = await User.findOne({ username: username }).
+      select('+password');
     if (!existingUser) {
       return res.status(401).json({ message: 'No user found!' });
     }
@@ -79,32 +108,31 @@ app.post(
       return res.status(401).json({ message: 'Incorrect password' });
     }
 
-    res.cookie('name', existingUser.firstname + ' ' + existingUser.lastname);
+    res.cookie('username', username);
     res.redirect('/home');
   },
 );
 
+// Get complaints for given name
+app.get('/my-complaints/', isAuthenticated, async function(req, res) {
+  // Find data in users collection
+  const complaints = await Complaint.find({
+    username: req.user.username,
+  });
+  res.render('pages/complaints', {
+    Complaints: complaints,
+  });
+});
+
 // Users Route
-app.get('/users', async function(req, res) {
+app.get('/users', isAuthenticated, isAdmin, async function(req, res) {
   // Find data in users collection
   const users = await User.find();
   // Show books page
   res.render('pages/users', { users });
 });
 
-// Get complaints for given name
-app.get('/my-complaints/', async function(req, res) {
-  // Find data in users collection
-  const complaints = await Complaint.find({
-    firstname: req.cookies.name.split(' ')[0],
-    lastname: req.cookies.name.split(' ')[1],
-  });
-  res.render('pages/complaints', {
-    Complaints: complaints,
-  });
-});
-
-app.get('/complaints', async function(req, res) {
+app.get('/complaints', isAuthenticated, isAdmin, async function(req, res) {
   // Find data in users collection
   const complaints = await Complaint.find();
   res.render('pages/complaints', {
@@ -112,15 +140,7 @@ app.get('/complaints', async function(req, res) {
   });
 });
 
-app.get('/complaints', async function(req, res) {
-  // Find data in users collection
-  const complaints = await Complaint.find();
-  res.render('pages/complaints', {
-    Complaints: complaints,
-  });
-});
-
-app.post('/report', async function(req, res, next) {
+app.post('/report', isAuthenticated, async function(req, res, next) {
   const crimeDetails = new Complaint({
     firstname: req.body.firstname,
     lastname: req.body.lastname,
