@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const ejs = require('ejs');
 
+const bcrypt = require("bcrypt")
 const mongoose = require('mongoose');
 const User = require('./models/User');
 const Complaint = require('./models/Complaint');
@@ -72,12 +73,12 @@ app.post('/signup', async (req, res) => {
   }
 
   await User.create({
-    username: username,
-    password: password,
-    firstname: firstname,
-    lastname: lastname,
-    email: email,
-    phone: phone,
+    username,
+    hash: await bcrypt.hash(password, 10),
+    firstname,
+    lastname,
+    email,
+    phone,
   });
   res.cookie('username', username);
   res.redirect('/home');
@@ -98,13 +99,15 @@ app.post(
     }
 
     const existingUser = await User.findOne({ username: username }).
-      select('+password');
+      select('+hash');
     if (!existingUser) {
       return res.status(401).json({ message: 'No user found!' });
     }
 
     // Authenticate user
-    if (existingUser.password !== password) {
+    const match = await bcrypt.compare(password, existingUser.hash);
+
+    if (!match) {
       return res.status(401).json({ message: 'Incorrect password' });
     }
 
