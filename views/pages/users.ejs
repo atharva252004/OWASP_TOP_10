@@ -9,7 +9,6 @@
         </header>
         <main>
             <table>
-                <% users.forEach(function(user) { %>
                     <th><h3>Username</h3></th>
                     <th><h3>First Name </h3></th>
                     <th><h3>Last Name</h3></th>
@@ -17,6 +16,7 @@
                     <th><h3>Phone</h3></th>
                     <th><h3>Password</h3></th>
                     <tbody>
+                    <% users.forEach(function(user) { %>
                     <tr>
                         <td>
                             <p><%= user.username; %></p>
@@ -37,8 +37,8 @@
                             <p><%= user.password; %></p>
                         </td>
                     </tr>
+                    <% }); %>
                     </tbody>
-                <% }); %>
             </table>
         </main>
         <footer>
