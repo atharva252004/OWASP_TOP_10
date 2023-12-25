@@ -2,11 +2,29 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const fs = require('node:fs');
+const path = require('node:path');
 
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 const User = require('./models/User');
 const Complaint = require('./models/Complaint');
+
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
+const morgan = require('morgan')('combined', { stream: accessLogStream })
+const winston = require('winston');
+
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.json(),
+  defaultMeta: { service: 'user-service' },
+  transports: [
+    // - Write all logs with importance level of `error` or less to `error.log`
+    // - Write all logs with importance level of `info` or less to `combined.log`
+    new winston.transports.File({ filename: 'error.log', level: 'error' }),
+    new winston.transports.File({ filename: 'combined.log' }),
+  ],
+});
 
 // Initialising Express
 const app = express();
@@ -29,14 +47,17 @@ app.listen(8080);
 // Middlewares
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/views/pages'));
+app.use(morgan)
 
 const isAuthenticated = async (req, res, next) => {
   if (!req.cookies.username) {
+    logger.info(`User not logged in. Redirecting to /login`)
     return res.redirect('/login');
   }
 
   const user = await User.findOne({ username: req.cookies.username });
   if (!user) {
+    logger.info(`User {username: ${req.cookies.username}} not found. Redirecting to /login`)
     return res.redirect('/login');
   }
 
@@ -47,6 +68,7 @@ const isAuthenticated = async (req, res, next) => {
 // isAdmin middleware
 const isAdmin = async (req, res, next) => {
   if (req.user.username !== 'admin') {
+    logger.error(`User {username: ${req.user.username}} tried to access admin route. Forbidden`)
     return res.status(403).json({ message: 'Forbidden' });
   }
   next();
@@ -69,6 +91,7 @@ app.post('/signup', async (req, res) => {
 
   const existingUser = await User.findOne({ username: username });
   if (existingUser) {
+    logger.info(`User {username: ${username}} already exists. Redirecting to /signup`)
     return res.status(401).json({ message: 'User already exists!' });
   }
 
@@ -101,6 +124,7 @@ app.post(
     const existingUser = await User.findOne({ username: username }).
       select('+hash');
     if (!existingUser) {
+      logger.info(`User {username: ${username}} not found. Redirecting to /login`)
       return res.status(401).json({ message: 'No user found!' });
     }
 
@@ -108,6 +132,7 @@ app.post(
     const match = await bcrypt.compare(password, existingUser.hash);
 
     if (!match) {
+      logger.error(`User {username: ${username}} entered incorrect password. Redirecting to /login`)
       return res.status(401).json({ message: 'Incorrect password' });
     }
 
@@ -193,10 +218,8 @@ app.post('/report', isAuthenticated, async function(req, res) {
   try {
     await crimeDetails.save();
     res.redirect('/home');
-    // alert("User Added successfully")
-    // res.sendFile(__dirname + "/views/pages/home.html");
   } catch (err) {
+    logger.error(`Error during record insertion : ${err}`)
     console.error('Error during record insertion : ' + err);
   }
-  // res.send('Data received:\n' + JSON.stringify(req.body));
 });

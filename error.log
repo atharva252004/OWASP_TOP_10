@@ -1,0 +1,1 @@
+{"level":"error","message":"User {username: admin} entered incorrect password. Redirecting to /login","service":"user-service"}
