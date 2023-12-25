@@ -2,9 +2,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const ejs = require('ejs');
 
-const bcrypt = require("bcrypt")
+const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 const User = require('./models/User');
 const Complaint = require('./models/Complaint');
@@ -20,6 +19,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const url =
   'mongodb+srv://root:pass@cluster0.ijtmeag.mongodb.net/testdb?retryWrites=true&w=majority';
+const placeholderImage =
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Placeholder_view_vector.svg/1022px-Placeholder_view_vector.svg.png?20220519031949';
 
 // connecting to database
 mongoose.connect(url);
@@ -48,9 +49,8 @@ const isAdmin = async (req, res, next) => {
   if (req.user.username !== 'admin') {
     return res.status(403).json({ message: 'Forbidden' });
   }
-
   next();
-}
+};
 
 app.get('/', function(req, res) {
   return res.redirect('/home');
@@ -122,6 +122,17 @@ app.get('/my-complaints/', isAuthenticated, async function(req, res) {
   const complaints = await Complaint.find({
     username: req.user.username,
   });
+  for (let i = 0; i < complaints.length; i++) {
+    complaints[i] = complaints[i].toObject();
+    complaints[i].url ??= placeholderImage;
+    complaints[i].imageName = await fetch(complaints[i].url).
+      then((res) => res.text()).
+      then((text) => {
+        const re = /<title>(.*?)<\/title>/;
+        const found = text.match(re);
+        return (found && found[1]) || 'Image';
+      });
+  }
   res.render('pages/complaints', {
     Complaints: complaints,
   });
@@ -138,20 +149,45 @@ app.get('/users', isAuthenticated, isAdmin, async function(req, res) {
 app.get('/complaints', isAuthenticated, isAdmin, async function(req, res) {
   // Find data in users collection
   const complaints = await Complaint.find();
+
+  for (let i = 0; i < complaints.length; i++) {
+    complaints[i] = complaints[i].toObject();
+    complaints[i].url ??= placeholderImage;
+    complaints[i].imageName = await fetch(complaints[i].url).
+      then((res) => res.text()).
+      then((text) => {
+        const re = /<title>(.*?)<\/title>/;
+        const found = text.match(re);
+        return (found && found[1]) || 'Image';
+      });
+  }
+
+  await Promise.allSettled(complaints.map((complaint) => complaint.imageName));
   res.render('pages/complaints', {
     Complaints: complaints,
   });
 });
 
-app.post('/report', isAuthenticated, async function(req, res, next) {
+app.post('/report', isAuthenticated, async function(req, res) {
+  const {
+    firstname,
+    lastname,
+    email,
+    date_time,
+    type,
+    location,
+    description,
+    url,
+  } = req.body;
   const crimeDetails = new Complaint({
-    firstname: req.body.firstname,
-    lastname: req.body.lastname,
-    email: req.body.email,
-    date_time: req.body.date_time,
-    type: req.body.type,
-    location: req.body.location,
-    description: req.body.description,
+    firstname,
+    lastname,
+    email,
+    date_time,
+    type,
+    location,
+    description,
+    url,
   });
 
   try {

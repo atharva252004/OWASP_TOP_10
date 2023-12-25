@@ -45,6 +45,7 @@
                         <th style="column-width: 100px; background-color: tomato">Complaint</th>
                         <th style="column-width: 300px; background-color: tomato">Location</th>
                         <th style="column-width: 600px; background-color: tomato">Desc</th>
+                        <th style="column-width: 600px; background-color: tomato">Image</th>
                     </tr>
                     <tbody>
                     <tr>
@@ -62,6 +63,9 @@
                         </td>
                         <td class='complaint-url'>
                             <a href='<%= complaint.url %>'>Image URL</a>
+                        </td>
+                        <td>
+                            <a href='<%- complaint.url %>'><%- complaint.imageName %></a>
                         </td>
                     </tr>
                     </tbody>
