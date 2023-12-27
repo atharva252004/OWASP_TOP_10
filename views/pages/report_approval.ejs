@@ -55,30 +55,30 @@
                     </tr>
                     <% Complaints.forEach(function(complaint) { %>
                     <tbody>
-                        <tr class='<%- complaint.approved ? 'approved': '' %>'>
+                        <tr class='<%= complaint.approved ? 'approved': '' %>'>
                             <td>
-                                <p><%- complaint.firstname + ' ' + complaint.lastname %></p>
+                                <p><%= complaint.firstname + ' ' + complaint.lastname %></p>
                             </td>
                             <td>
-                                <p><%- complaint.email %></p>
+                                <p><%= complaint.email %></p>
                             </td>
                             <td>
-                                <p><%- complaint.date_time; %></p>
+                                <p><%= complaint.date_time; %></p>
                             </td>
                             <td>
-                                <p><%- complaint.type; %></p>
+                                <p><%= complaint.type; %></p>
                             </td>
                             <td>
-                                <p><%- complaint.location; %></p>
+                                <p><%= complaint.location; %></p>
                             </td>
                             <td>
-                                <p><%- complaint.description; %></p>
+                                <p><%= complaint.description; %></p>
                             </td>
                             <td>
-                                <a href='<%- complaint.url; %>'><%- complaint.imageName; %></a>
+                                <a href='<%= complaint.url; %>'><%= complaint.imageName; %></a>
                             </td>
                             <td>
-                                <button <%- complaint.approved ? 'disabled=disabled': '' %> onclick='approve("<%- complaint._id; %>")'>Approve</button>
+                                <button <%= complaint.approved ? 'disabled=disabled': '' %> onclick='approve("<%= complaint._id; %>")'>Approve</button>
                             </td>
                         </tr>
                         </tbody>

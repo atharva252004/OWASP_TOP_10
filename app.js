@@ -103,7 +103,7 @@ app.get('/signup', function(req, res) {
 // Serve home.html file only if user is authenticated
 app.get('/home', isAuthenticated, function(req, res) {
   res.render(__dirname + '/views/pages/home.ejs', {
-    name: req.cookies.name,
+    username: req.cookies.username,
   });
 });
 
