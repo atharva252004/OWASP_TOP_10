@@ -74,7 +74,7 @@ const isAuthenticated = async (req, res, next) => {
 };
 
 
-/** 
+/**
   * Middleware to check if the user is admin.
   * @param {Object} req - The request object.
   * @param {Object} res - The response object.
@@ -102,7 +102,9 @@ app.get('/signup', function(req, res) {
 
 // Serve home.html file only if user is authenticated
 app.get('/home', isAuthenticated, function(req, res) {
-  res.sendFile(__dirname + '/views/pages/home.html');
+  res.render(__dirname + '/views/pages/home.ejs', {
+    name: req.cookies.name,
+  });
 });
 
 // Handle signup form submission
@@ -140,7 +142,7 @@ app.get('/login', (req, res) => {
 app.post('/login', async function(req, res) {
   const { username, password } = req.body;
 
-  // If username or password is not provided, return error  
+  // If username or password is not provided, return error
   if (!username || !password) {
     return res.status(401).json({ message: 'Incorrect username or password' });
   }
