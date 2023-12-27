@@ -34,7 +34,9 @@ app.get('/', function(req, res) {
 });
 
 app.get('/home', function(req, res) {
-  res.sendFile(__dirname + '/views/pages/home.html');
+  res.render(__dirname + '/views/pages/home.ejs', {
+    name: req.cookies.name,
+  });
 });
 
 app.post('/signup', async (req, res) => {
@@ -157,8 +159,6 @@ app.post('/report', async function(req, res) {
   try {
     await crimeDetails.save();
     res.redirect('/home');
-    // alert("User Added successfully")
-    // res.sendFile(__dirname + "/views/pages/home.html");
   } catch (err) {
     console.error('Error during record insertion : ' + err);
   }
