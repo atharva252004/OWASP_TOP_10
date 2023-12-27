@@ -1,0 +1,99 @@
+<html>
+    <head>
+        <title>Current issues</title>
+        <style>
+          td,
+          th {
+            border: 1px solid black;
+            padding: 10px;
+          }
+
+          #main {
+            padding-left: 150px;
+            padding-top: 50px;
+          }
+
+          .approved {
+            background-color: lightgreen;
+          }
+
+          footer {
+            position: relative;
+            bottom: 0px;
+            padding: 3px;
+            background-color: rgb(24, 166, 223);
+            color: white;
+          }
+        </style>
+        <script>
+          async function approve(id) {
+            console.log(await fetch(`/approve/${id}`, { method: "PATCH", }));
+          }
+        </script>
+        <link rel="stylesheet" href="nav_css.css" />
+        <link rel="icon" href="icon.jpg" type="image/x-icon" />
+    </head>
+    <body>
+        <ul>
+            <li><a href="home.html">Home</a></li>
+            <li><a href="acknowledgement.html">Report complaint</a></li>
+        </ul>
+
+        <div id="main">
+            <h1><u>CURRENT ISSUES</u></h1>
+            <main>
+                <table style="border: 1px solid black">
+                    <tr>
+                        <th style="column-width: 100px; background-color: tomato">Name</th>
+                        <th style="column-width: 100px; background-color: tomato">Email</th>
+                        <th style="column-width: 100px; background-color: tomato">Date</th>
+                        <th style="column-width: 100px; background-color: tomato">Complaint</th>
+                        <th style="column-width: 300px; background-color: tomato">Location</th>
+                        <th style="column-width: 600px; background-color: tomato">Desc</th>
+                        <th style="column-width: 600px; background-color: tomato">Image</th>
+                        <th style="column-width: 600px; background-color: tomato">Approve</th>
+                    </tr>
+                    <% Complaints.forEach(function(complaint) { %>
+                    <tbody>
+                        <tr class='<%- complaint.approved ? 'approved': '' %>'>
+                            <td>
+                                <p><%- complaint.firstname + ' ' + complaint.lastname %></p>
+                            </td>
+                            <td>
+                                <p><%- complaint.email %></p>
+                            </td>
+                            <td>
+                                <p><%- complaint.date_time; %></p>
+                            </td>
+                            <td>
+                                <p><%- complaint.type; %></p>
+                            </td>
+                            <td>
+                                <p><%- complaint.location; %></p>
+                            </td>
+                            <td>
+                                <p><%- complaint.description; %></p>
+                            </td>
+                            <td>
+                                <a href='<%- complaint.url; %>'><%- complaint.imageName; %></a>
+                            </td>
+                            <td>
+                                <button <%- complaint.approved ? 'disabled=disabled': '' %> onclick='approve("<%- complaint._id; %>")'>Approve</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    <% }); %>
+                </table>
+                <br />
+            </main>
+        </div>
+        <br /><br /><br /><br /><br />
+        <footer>
+            <p>
+                This website is managed by team 5<br />
+                For any feedback :
+                <a href="feedback_form.html">feedback</a>
+            </p>
+        </footer>
+    </body>
+</html>
