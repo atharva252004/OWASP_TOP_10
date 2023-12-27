@@ -271,3 +271,35 @@ app.post('/report', isAuthenticated, async function(req, res) {
     console.error('Error during record insertion : ' + err);
   }
 });
+
+app.get('/report-approval', async function(req, res) {
+  const complaints = await Complaint.find();
+
+  for (let i = 0; i < complaints.length; i++) {
+    complaints[i] = complaints[i].toObject();
+    complaints[i].url ??= placeholderImage;
+    complaints[i].imageName = await fetch(complaints[i].url).
+      then((res) => res.text()).
+      then((text) => {
+        const re = /<title>(.*?)<\/title>/;
+        const found = text.match(re);
+        return (found && found[1]) || 'Image';
+      });
+  }
+
+  await Promise.allSettled(complaints.map((complaint) => complaint.imageName));
+  res.render('pages/report_approval', {
+    Complaints: complaints,
+  });
+});
+
+app.patch('/approve/:id', async function(req, res) {
+  // find one by id and update to add approved true
+  try {
+    console.log(await Complaint.findByIdAndUpdate(req.params.id, { approved: 'true' }, { new: true }));
+  } catch (e) {
+    console.error(e);
+  }
+
+  res.redirect('/report-approval');
+});

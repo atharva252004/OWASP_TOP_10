@@ -6,7 +6,6 @@
       th {
         border: 1px solid black;
         padding: 10px;
-        background-color: aqua;
       }
 
       #main {
@@ -36,16 +35,16 @@
     <form>
         <main>
             <table style="border: 1px solid black">
+                <tr>
+                    <th style="column-width: 100px; background-color: tomato">Date</th>
+                    <th style="column-width: 100px; background-color: tomato">Complaint</th>
+                    <th style="column-width: 300px; background-color: tomato">Location</th>
+                    <th style="column-width: 600px; background-color: tomato">Desc</th>
+                    <th style="column-width: 600px; background-color: tomato">Image</th>
+                </tr>
+                <tbody>
                 <% Complaints.forEach(function(complaint) { %>
 
-                    <tr>
-                        <th style="column-width: 100px; background-color: tomato">Date</th>
-                        <th style="column-width: 100px; background-color: tomato">Complaint</th>
-                        <th style="column-width: 300px; background-color: tomato">Location</th>
-                        <th style="column-width: 600px; background-color: tomato">Desc</th>
-                        <th style="column-width: 600px; background-color: tomato">Image</th>
-                    </tr>
-                    <tbody>
                     <tr>
                         <td>
                             <p><%= complaint.date_time; %></p>
