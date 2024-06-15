@@ -1,4 +1,3 @@
-SE - I
 OWASP Top 10 Attacks
 
 # Crime Awareness Portal
