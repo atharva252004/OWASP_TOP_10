@@ -23,7 +23,7 @@ To run the Crime Awareness Portal locally, follow these steps:
 1.Clone the repository:
 
 ```
-https://github.com/danielchristopher513/CRIME_AWARENESS_PORTAL_USING_MERN_STACK.git
+https://github.com/atharva252004/OWASP_TOP_10.git
 ```
 
 2.Install the dependencies for the server:
