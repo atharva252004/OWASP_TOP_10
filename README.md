@@ -29,7 +29,6 @@ https://github.com/atharva252004/OWASP_TOP_10.git
 2.Install the dependencies for the server:
 
 ```
-cd CRIME_AWARENESS_PORTAL_USING_MERN_STACK/testapp
 npm install
 ```
 
